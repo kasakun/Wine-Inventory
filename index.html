@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{% autoescape true %}
+<html>
+  <head>
+    <!-- [START css] -->
+    <link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+    <link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap-responsive.css">
+    <!-- [END css] -->
+    <style type="text/css">
+      button{
+        margin: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Nav Bar-->
+    <nav class= "navbar navbar-inverse bg-primary">
+      <a class= "navbar-brand" href="#">Wine Inventory</a>
+    </nav>
+
+    <div class = "jumbotron jumbotron-fluid">
+      <div class = "container">
+        <h1 class = "display-3">Welcome to Zeyu Chen's Wine Inventory App!</h1>
+      </div>
+    </div>
+
+
+    <div class="container">
+      <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+        <div lass="btn-group mr-2" role="group" aria-label="First group">
+          <button type = "type" class = "btn btn-lg btn-primary" href = "#"> Red Wines</button>
+        </div>
+        <div lass="btn-group mr-2" role="group" aria-label="Second group">
+          <button type = "type" class = "btn btn-lg btn-primary" href = "#"> White Wines</button>
+        </div>
+        <div lass="btn-group mr-2" role="group" aria-label="Third group">
+          <button type = "type" class = "btn btn-lg btn-primary" href = "#"> Rose Wines</button>
+        </div>
+        <div lass="btn-group mr-2" role="group" aria-label="Fourth group">
+          <button type = "type" class = "btn btn-lg btn-primary" href = "#"> Sparkling Wines</button>
+        </div>
+      </div>
+      <div class = "btn-toolbar btn-group-lg" role="toolbar" aria-label="Toolbar2 with button groups">
+        <button type = "type" class = "btn btn-lg btn-outline-info" href = "#"> Search</button>
+        <button type = "type" class = "btn btn-lg btn-outline-success" href = "#"> Enter New Wine Info </button>
+      </div>
+    </div>
+
+
+  </body>
+</html>
+{% endautoescape %}
