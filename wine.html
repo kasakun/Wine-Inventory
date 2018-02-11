@@ -11,6 +11,17 @@
 {% endblock %}
 {% block content %}
 <div class = "row">
+  <div class = "btn-toolbar btn-group-lg" role="toolbar" aria-label="Toolbar2 with button groups">
+    <form action = "/search" method = "GET">
+      <button type = "type" class = "btn btn-lg btn-outline-info" href = "#"> Search</button>
+    </form>
+    <form action = "/enterinfo" method = "GET">
+      <button type = "submit" class = "btn btn-lg btn-outline-success" href = "#"> Enter New Wine Info </button>
+    </form>
+  </div>
+</div>
+<hr>
+<div class = "row">
   {% for wine in wines %}
   <div class="col-sm-6">
       <div class = "card-header text-white bg-primary"> Name: {{wine.name}}</div>

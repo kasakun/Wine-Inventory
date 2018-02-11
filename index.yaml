@@ -1,10 +1,6 @@
 indexes:
 - kind: wine
-  ancestor: no
+  ancestor: yes
   properties:
-  - name: country
-  - name: region
-  - name: variety
-  - name: year
   - name: date
     direction: desc

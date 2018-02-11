@@ -74,7 +74,7 @@ class Wine(webapp2.RequestHandler):
         else:
             wine_query = wine.query(ancestor = wine_key(cate)).order(-wine.date)
 
-        wines = wine_query.fetch(10)
+        wines = wine_query.fetch(50)
         wine_values = {
             'wines': wines,
             'cate': cate
@@ -88,8 +88,6 @@ class Wine(webapp2.RequestHandler):
         query_params = {'WineCategory': cate}
         self.redirect('/wine?' + urllib.urlencode(query_params))
 
-
-        #self.response.write("Hello!")
 
 # Add Wine
 class Enter(webapp2.RequestHandler):
@@ -108,6 +106,7 @@ class Enter(webapp2.RequestHandler):
         query_params = {'WineCategory': cate}
         self.redirect('/wine?' + urllib.urlencode(query_params))
 
+# Search
 class Search(webapp2.RequestHandler):
     def get(self):
         template = JINJA_ENVIRONMENT.get_template('search.html')
@@ -169,8 +168,8 @@ class Search(webapp2.RequestHandler):
                     wine_query = wine_query.filter(wine.year == wine_tmp.year)
 
         if warn1 != 1:
-            if len(wine_query.fetch(10)) != 0:
-                wines = wine_query.fetch(10)
+            if len(wine_query.fetch(1)) != 0:
+                wines = wine_query.fetch(50)
             else:
                 warn2 = 1
 
