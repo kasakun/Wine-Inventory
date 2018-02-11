@@ -11,6 +11,12 @@ handlers:
 - url: /bootstrap
   static_dir: bootstrap
 
+- url: /css
+  static_dir: css
+
+- url: /template
+  static_dir: template
+
 - url: /.*
   script: wine.app
 # [END handlers]

@@ -1,0 +1,90 @@
+{% extends "index.html" %}
+{% block title %}Search{% endblock %}
+{% block jumbo %}
+  <nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Search</li>
+  </ol>
+  </nav>
+{% endblock %}
+{% block content %}
+  <form class = "search" action = '/search' method = "POST">
+    <div class="row">
+      <div class="form-group col-md-4">
+        <label for="name">Name</label>
+        <input type="text" class="form-control" id="name" name = "name" placeholder="Name">
+        <div class="invalid-feedback">
+          Please input Name.
+        </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="region">Region</label>
+        <input type="text" class="form-control" id="region" name = "region" placeholder="Region">
+        <div class="invalid-feedback">
+          Please input the Region.
+        </div>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="country">Country of Origin</label>
+        <input type="text" class="form-control" id="country" name = "country" placeholder="Country">
+        <div class="invalid-feedback">
+          Please input Country.
+        </div>
+      </div>
+    </div>
+    <div class = "row">
+      <div class="form-group col-md-4">
+        <label for="WineCategory">Category</label>
+        <input type="text" class="form-control" id="WineCategory" name = "WineCategory" placeholder="Category">
+        <div class="invalid-feedback">
+          Please input the Category. Default is Red
+        </div>
+      </div>
+      <div class="form-group col-md-3">
+        <label for="variety">Variety</label>
+        <input type="text" class="form-control" id="variety" name = "variety" placeholder="Variety">
+        <div class="invalid-feedback">
+          Please input the Variety.
+        </div>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="variety">Year</label>
+        <input type="text" class="form-control" id="year" name = "year" placeholder="Year">
+        <div class="invalid-feedback">
+          Please input the Year.
+        </div>
+      </div>
+    </div>
+    <button id = "search_button" type="submit" class="btn btn-primary">Search</button>
+  </form>
+  <hr>
+  <div class = "row">
+    {% if warn1 == 1 %}
+      <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">No Input</h4>
+        <p>Please input at least one tag ro search. Or you can check all wines <a href = "/wine" >here</a>.</p>
+      </div>
+    {% elif warn2 == 1 %}
+    <div class="alert alert-warning" role="alert">
+      <h4 class="alert-heading">OOPS!</h4>
+      <p>Seem you are looking for something not in the store!</p>
+      <hr>
+      <p>Try <a href = "/enterinfo" >enter a new wine</a>.</p>
+    </div>
+    {% else %}
+      {% for wine in wines %}
+      <div class="col-sm-6">
+          <div class = "card-header text-white bg-primary"> Name: {{wine.name}}</div>
+          <ul class = "list-group list-group-flush">
+            <li class = "list-group-item">Category: {{ wine.key.parent().id() }}</li>
+            <li class = "list-group-item">Variety: {{wine.variety}}</li>
+            <li class = "list-group-item">Region: {{wine.region}}</li>
+            <li class = "list-group-item">Country: {{wine.country}}</li>
+            <li class = "list-group-item">Year: {{wine.year}}</li>
+          </ul>
+      </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+{% endblock %}

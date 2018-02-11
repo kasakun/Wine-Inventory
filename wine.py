@@ -20,6 +20,7 @@ import urllib
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
+from google.appengine.api import search
 
 import jinja2
 import webapp2
@@ -38,89 +39,154 @@ DEFAULT_WINE_NAME = 'ChenZeyuGuest'
 # will be consistent. However, the write rate should be limited to
 # ~1/second.
 
-def wine_key(wine_name=DEFAULT_WINE_NAME):
+def wine_key(wine_cate=DEFAULT_WINE_NAME):
     """Constructs a Datastore key for a Wine entity.
 
-    We use wine_name as the key.
+    We use wine_cate as the key.
     """
-    return ndb.Key('Wine', wine_name)
+    return ndb.Key('WineCategory', wine_cate)
 
-
-# [START greeting]
-class Author(ndb.Model):
-    """Sub model for representing an author."""
-    identity = ndb.StringProperty(indexed=False)
-    email = ndb.StringProperty(indexed=False)
-
-
-class Greeting(ndb.Model):
+class wine(ndb.Model):
     """A main model for representing an individual Wine entry."""
-    author = ndb.StructuredProperty(Author)
-    content = ndb.StringProperty(indexed=False)
-    date = ndb.DateTimeProperty(auto_now_add=True)
-# [END greeting]
+    country = ndb.StringProperty(indexed = True)
+    region = ndb.StringProperty(indexed = True)
+    variety = ndb.StringProperty(indexed = True)
+    name = ndb.StringProperty(indexed = True)
+    year = ndb.StringProperty(indexed = True)
+    date = ndb.DateTimeProperty(auto_now_add = True)
 
 
 # [START main_page]
 class MainPage(webapp2.RequestHandler):
 
     def get(self):
-        wine_name = self.request.get('wine_name',
-                                          DEFAULT_WINE_NAME)
-        greetings_query = Greeting.query(
-            ancestor=wine_key(wine_name)).order(-Greeting.date)
-        greetings = greetings_query.fetch(20)   ## Modify the query number
-
-        user = users.get_current_user()
-        if user:
-            url = users.create_logout_url(self.request.uri)
-            url_linktext = 'Logout'
-        else:
-            url = users.create_login_url(self.request.uri)
-            url_linktext = 'Login'
-
-        template_values = {
-            'user': user,
-            'greetings': greetings,
-            'wine_name': urllib.quote_plus(wine_name),
-            'url': url,
-            'url_linktext': url_linktext,
-        }
-
         template = JINJA_ENVIRONMENT.get_template('index.html')
-        self.response.write(template.render(template_values))
+        self.response.write(template.render())
 # [END main_page]
 
-
-# [START wine]
+# Wine
 class Wine(webapp2.RequestHandler):
+    def get(self):
+        cate = self.request.get('WineCategory')
+
+        if cate == '':
+            wine_query = wine.query().order(-wine.date)
+        else:
+            wine_query = wine.query(ancestor = wine_key(cate)).order(-wine.date)
+
+        wines = wine_query.fetch(10)
+        wine_values = {
+            'wines': wines,
+            'cate': cate
+        }
+        template = JINJA_ENVIRONMENT.get_template('wine.html')
+        self.response.write(template.render(wine_values))
 
     def post(self):
-        # We set the same parent key on the 'Greeting' to ensure each
-        # Greeting is in the same entity group. Queries across the
-        # single entity group will be consistent. However, the write
-        # rate to a single entity group should be limited to
-        # ~1/second.
-        wine_name = self.request.get('wine_name',
-                                          DEFAULT_WINE_NAME)
-        greeting = Greeting(parent=wine_key(wine_name))
+        cate = self.request.get('bt');
 
-        if users.get_current_user():
-            greeting.author = Author(
-                    identity=users.get_current_user().user_id(),
-                    email=users.get_current_user().email())
+        query_params = {'WineCategory': cate}
+        self.redirect('/wine?' + urllib.urlencode(query_params))
 
-        greeting.content = self.request.get('content')
-        greeting.put()
 
-        query_params = {'wine_name': wine_name}
-        self.redirect('/?' + urllib.urlencode(query_params))
-# [END wine]
+        #self.response.write("Hello!")
 
+# Add Wine
+class Enter(webapp2.RequestHandler):
+    def get(self):
+        template = JINJA_ENVIRONMENT.get_template('enter.html')
+        self.response.write(template.render())
+    def post(self):
+        cate = self.request.get('WineCategory', 'Red')
+        new_wine = wine(parent = wine_key(cate))
+        new_wine.country = self.request.get('country')
+        new_wine.region = self.request.get('region')
+        new_wine.variety = self.request.get('variety')
+        new_wine.name = self.request.get('name')
+        new_wine.year = self.request.get('year')
+        new_wine.put()
+        query_params = {'WineCategory': cate}
+        self.redirect('/wine?' + urllib.urlencode(query_params))
+
+class Search(webapp2.RequestHandler):
+    def get(self):
+        template = JINJA_ENVIRONMENT.get_template('search.html')
+        self.response.write(template.render())
+    def post(self):
+        warn1 = 0
+        warn2 = 0
+        wines = ''
+
+
+        cate = self.request.get('WineCategory', 'Red').lower()
+        country = self.request.get('country').lower()
+        region = self.request.get('region').lower()
+        variety = self.request.get('variety').lower()
+        name = self.request.get('name').lower()
+        year = self.request.get('year').lower()
+        print cate != ' ' and country != ' ' and region != ' ' and variety != ' ' and name != ' ' and year != ' '
+        print cate !=' '
+        if cate == '' and country == '' and region == '' and variety ==  '' and name == '' and year == '' :
+            warn1 = 1
+        ############Search##################
+        wine_query = wine.query()
+        if cate != '':
+            wine_tmps = wine_query.fetch()
+            for wine_tmp in wine_tmps:
+                items = wine_tmp.key.parent().id()
+                if cate in items.lower():
+                    wine_query = wine.query(ancestor = wine_key(wine_tmp.key.parent().id()))
+
+        if country != '':
+            wine_tmps = wine_query.fetch()
+            for wine_tmp in wine_tmps:
+                items = wine_tmp.country
+                if country in items.lower():
+                    wine_query = wine_query.filter(wine.country == wine_tmp.country)
+        if region != '':
+            wine_tmps = wine_query.fetch()
+            for wine_tmp in wine_tmps:
+                items = wine_tmp.region
+                if region in items.lower():
+                    wine_query = wine_query.filter(wine.region == wine_tmp.region)
+        if variety != '':
+            wine_tmps = wine_query.fetch()
+            for wine_tmp in wine_tmps:
+                items = wine_tmp.variety
+                if variety in items.lower():
+                    wine_query = wine_query.filter(wine.variety == wine_tmp.variety)
+        if name != '':
+            wine_tmps = wine_query.fetch()
+            for wine_tmp in wine_tmps:
+                items = wine_tmp.name
+                if region in items.lower():
+                    wine_query = wine_query.filter(wine.name == wine_tmp.name)
+        if year != '':
+            wine_tmps = wine_query.fetch()
+            for wine_tmp in wine_tmps:
+                items = wine_tmp.year
+                if year in items.lower():
+                    wine_query = wine_query.filter(wine.year == wine_tmp.year)
+
+        if warn1 != 1:
+            if len(wine_query.fetch(10)) != 0:
+                wines = wine_query.fetch(10)
+            else:
+                warn2 = 1
+
+        wine_values = {
+            'wines': wines,
+            'warn1': warn1,
+            'warn2': warn2,
+        }
+        template = JINJA_ENVIRONMENT.get_template('search.html')
+        self.response.write(template.render(wine_values))
 
 # [START app]
 app = webapp2.WSGIApplication([
     ('/', MainPage),
-    ('/sign', Wine),
+    ('/wine', Wine),
+    ('/enterinfo', Enter),
+    ('/search', Search)
 ], debug=True)
 # [END app]

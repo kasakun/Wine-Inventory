@@ -1,0 +1,29 @@
+{% extends "index.html" %}
+{% block title %}Wine Library{% endblock %}
+{% block jumbo %}
+  <nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item"><a href="/wine">Library</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ cate }}</li>
+  </ol>
+  </nav>
+{% endblock %}
+{% block content %}
+<div class = "row">
+  {% for wine in wines %}
+  <div class="col-sm-6">
+      <div class = "card-header text-white bg-primary"> Name: {{wine.name}}</div>
+      <ul class = "list-group list-group-flush">
+        <li class = "list-group-item">Category: {{ wine.key.parent().id() }}</li>
+        <li class = "list-group-item">Variety: {{wine.variety}}</li>
+        <li class = "list-group-item">Region: {{wine.region}}</li>
+        <li class = "list-group-item">Country: {{wine.country}}</li>
+        <li class = "list-group-item">Year: {{wine.year}}</li>
+      </ul>
+  </div>
+  {% endfor %}
+</div>
+
+
+{% endblock %}

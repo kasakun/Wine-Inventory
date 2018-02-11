@@ -2,51 +2,71 @@
 {% autoescape true %}
 <html>
   <head>
-    <!-- [START css] -->
+    <title>{% block title %}Wine Inventory{% endblock %}</title>
     <link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap.css">
-    <link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap-responsive.css">
-    <!-- [END css] -->
-    <style type="text/css">
-      button{
-        margin: 13px;
-      }
-    </style>
+    <link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap-grid.css">
+    <link type="text/css" rel="stylesheet" href="/bootstrap/css/bootstrap-reboot.css">
+    <link type = "text/css" rel = "stylesheet" href = "css/mystyle.css" charset = "utf-8">
   </head>
   <body>
     <!-- Nav Bar-->
     <nav class= "navbar navbar-inverse bg-primary">
-      <a class= "navbar-brand" href="#">Wine Inventory</a>
+      <a class= "navbar-brand" href="/">Wine Inventory</a>
     </nav>
-
+    {%block jumbo %}
     <div class = "jumbotron jumbotron-fluid">
       <div class = "container">
         <h1 class = "display-3">Welcome to Zeyu Chen's Wine Inventory App!</h1>
       </div>
     </div>
-
+    {% endblock %}
 
     <div class="container">
-      <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-        <div lass="btn-group mr-2" role="group" aria-label="First group">
-          <button type = "type" class = "btn btn-lg btn-primary" href = "#"> Red Wines</button>
-        </div>
-        <div lass="btn-group mr-2" role="group" aria-label="Second group">
-          <button type = "type" class = "btn btn-lg btn-primary" href = "#"> White Wines</button>
-        </div>
-        <div lass="btn-group mr-2" role="group" aria-label="Third group">
-          <button type = "type" class = "btn btn-lg btn-primary" href = "#"> Rose Wines</button>
-        </div>
-        <div lass="btn-group mr-2" role="group" aria-label="Fourth group">
-          <button type = "type" class = "btn btn-lg btn-primary" href = "#"> Sparkling Wines</button>
-        </div>
+      {% block content %}
+      <div class = "row">
+        <h2>Wine Library</h2>
       </div>
+      <form action = "/wine" method = "POST">
+        <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+          <div lass="btn-group mr-2" role="group" aria-label="First group">
+            <button type = "submit" class = "btn btn-lg btn-primary" name = "bt" value = "Red">Red</button>
+          </div>
+          <div lass="btn-group mr-2" role="group" aria-label="Second group">
+            <button type = "submit" class = "btn btn-lg btn-primary" name = "bt" value = "White">White</button>
+          </div>
+          <div lass="btn-group mr-2" role="group" aria-label="Third group">
+            <button type = "submit" class = "btn btn-lg btn-primary" name = "bt" value = "Rose">Ros&eacute</button>
+          </div>
+          <div lass="btn-group mr-2" role="group" aria-label="Fourth group">
+            <button type = "submit" class = "btn btn-lg btn-primary" name = "bt" value = "Sparkling">Sparkling</button>
+          </div>
+        </div>
+      </form>
+      <hr>
       <div class = "btn-toolbar btn-group-lg" role="toolbar" aria-label="Toolbar2 with button groups">
-        <button type = "type" class = "btn btn-lg btn-outline-info" href = "#"> Search</button>
-        <button type = "type" class = "btn btn-lg btn-outline-success" href = "#"> Enter New Wine Info </button>
+        <form action = "/search" method = "GET">
+          <button type = "type" class = "btn btn-lg btn-outline-info" href = "#"> Search</button>
+        </form>
+        <form action = "/enterinfo" method = "GET">
+          <button type = "submit" class = "btn btn-lg btn-outline-success" href = "#"> Enter New Wine Info </button>
+        </form>
       </div>
+
+      {% endblock %}
     </div>
 
+    <footer class = "footer inverse bg-secondary">
 
+      <!--Copyright -->
+      <div class = "container">
+        <span class = "text-muted">
+          &copy; Copyright 2018 by <a href="#">Zeyu Chen</a>
+        </span>
+      </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   </body>
 </html>
 {% endautoescape %}

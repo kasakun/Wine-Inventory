@@ -1,6 +1,10 @@
 indexes:
-- kind: Greeting
-  ancestor: yes
+- kind: wine
+  ancestor: no
   properties:
+  - name: country
+  - name: region
+  - name: variety
+  - name: year
   - name: date
     direction: desc

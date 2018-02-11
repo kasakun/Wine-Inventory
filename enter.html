@@ -1,0 +1,61 @@
+{% extends "index.html" %}
+{% block title %}Enter New Wine{% endblock %}
+{% block jumbo %}
+  <nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Enter New Wine</li>
+  </ol>
+  </nav>
+{% endblock %}
+{% block content %}
+<form class = "info" action = '/enterinfo' method = "POST">
+  <div class="row">
+    <div class="form-group col-md-4">
+      <label for="name">Name</label>
+      <input type="text" class="form-control" id="name" name = "name" placeholder="Name" required>
+      <div class="invalid-feedback">
+        Please input Name.
+      </div>
+    </div>
+    <div class="form-group col-md-4">
+      <label for="region">Region</label>
+      <input type="text" class="form-control" id="region" name = "region" placeholder="Region" required>
+      <div class="invalid-feedback">
+        Please input the Region.
+      </div>
+    </div>
+    <div class="form-group col-md-4">
+      <label for="country">Country of Origin</label>
+      <input type="text" class="form-control" id="country" name = "country" placeholder="Country" required>
+      <div class="invalid-feedback">
+        Please input Country.
+      </div>
+    </div>
+  </div>
+  <div class = "row">
+    <div class="form-group col-md-4">
+      <label for="WineCategory">Category</label>
+      <input type="text" class="form-control" id="WineCategory" name = "WineCategory" placeholder="Category" required>
+      <div class="invalid-feedback">
+        Please input the Category.
+      </div>
+    </div>
+    <div class="form-group col-md-3">
+      <label for="variety">Variety</label>
+      <input type="text" class="form-control" id="variety" name = "variety" placeholder="Variety" required>
+      <div class="invalid-feedback">
+        Please input the Variety.
+      </div>
+    </div>
+    <div class="form-group col-md-2">
+      <label for="variety">Year</label>
+      <input type="text" class="form-control" id="year" name = "year" placeholder="Year" required>
+      <div class="invalid-feedback">
+        Please input the Year.
+      </div>
+    </div>
+  </div>
+  <button id = "submit" type="submit" class="btn btn-primary">Submit</button>
+</form>
+{% endblock %}
