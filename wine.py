@@ -31,7 +31,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True)
 # [END imports]
 
-DEFAULT_WINE_NAME = 'ChenZeyuGuest'
+DEFAULT_WINE_CAT = 'Red'
 
 
 # We set a parent key on the 'Greetings' to ensure that they are all
@@ -39,7 +39,7 @@ DEFAULT_WINE_NAME = 'ChenZeyuGuest'
 # will be consistent. However, the write rate should be limited to
 # ~1/second.
 
-def wine_key(wine_cate=DEFAULT_WINE_NAME):
+def wine_key(wine_cate=DEFAULT_WINE_CAT):
     """Constructs a Datastore key for a Wine entity.
 
     We use wine_cate as the key.
