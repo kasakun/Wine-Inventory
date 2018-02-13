@@ -148,7 +148,9 @@ class Search(webapp2.RequestHandler):
                 items = wine_tmp.key.parent().id()
                 if cate in items.lower():
                     wine_query = wine.query(ancestor = wine_key(wine_tmp.key.parent().id()))
-                    warn2 = 0
+                    cate_warn = 0
+                else:
+                    cate_warn = 1
         else:
             wine_query = wine.query(ancestor = wine_key('Red'))
             if wine_query.fetch():
