@@ -36,7 +36,7 @@
     <div class = "row">
       <div class="form-group col-md-4">
         <label for="WineCategory">Category</label>
-        <input type="text" class="form-control" id="WineCategory" name = "WineCategory" placeholder="Category" required>
+        <input type="text" class="form-control" id="WineCategory" name = "WineCategory" placeholder="Red">
         <div class="invalid-feedback">
           Please input the Category.
         </div>
@@ -63,8 +63,15 @@
     {% if warn1 == 1 %}
       <div class="alert alert-danger" role="alert">
         <h4 class="alert-heading">No Input</h4>
-        <p>Please input at least one tag ro search. Or you can check all wines <a href = "/wine" >here</a>.</p>
+        <p>Please input at least one tag(except category) to search. Or you can check all wines <a href = "/wine" >here</a>.</p>
       </div>
+    {% elif warn0 == 1 %}
+    <div class="alert alert-warning" role="alert">
+      <h4 class="alert-heading">OOPS!</h4>
+      <p>THe library is Empty!</p>
+      <hr>
+      <p>Try <a href = "/enterinfo" >enter a new wine</a>.</p>
+    </div>
     {% elif warn2 == 1 %}
     <div class="alert alert-warning" role="alert">
       <h4 class="alert-heading">OOPS!</h4>

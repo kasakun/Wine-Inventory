@@ -109,11 +109,22 @@ class Enter(webapp2.RequestHandler):
 # Search
 class Search(webapp2.RequestHandler):
     def get(self):
+
         template = JINJA_ENVIRONMENT.get_template('search.html')
         self.response.write(template.render())
     def post(self):
-        warn1 = 0
-        warn2 = 0
+        warn0 = 0  ## Check the library
+        warn1 = 0  ## Check the input except WineCategory
+        warn2 = 1  ## Check the results
+
+        ## Each Tag Sign
+        cate_warn = 1
+        name_warn = 1
+        region_warn = 1
+        country_warn =1
+        variety_warn = 1
+        year_warn = 1
+
         wines = ''
 
 
@@ -123,18 +134,53 @@ class Search(webapp2.RequestHandler):
         variety = self.request.get('variety').lower()
         name = self.request.get('name').lower()
         year = self.request.get('year').lower()
-        print cate != ' ' and country != ' ' and region != ' ' and variety != ' ' and name != ' ' and year != ' '
-        print cate !=' '
-        if cate == '' and country == '' and region == '' and variety ==  '' and name == '' and year == '' :
+
+        if country == '' and region == '' and variety ==  '' and name == '' and year == '' :
             warn1 = 1
         ############Search##################
         wine_query = wine.query()
+        if not wine_query.fetch():
+            warn0 = 1
+
         if cate != '':
             wine_tmps = wine_query.fetch()
             for wine_tmp in wine_tmps:
                 items = wine_tmp.key.parent().id()
                 if cate in items.lower():
                     wine_query = wine.query(ancestor = wine_key(wine_tmp.key.parent().id()))
+                    warn2 = 0
+        else:
+            wine_query = wine.query(ancestor = wine_key('Red'))
+            if wine_query.fetch():
+                cate_warn = 0
+            else:
+                cate_warn = 1
+
+        if name != '':
+            wine_tmps = wine_query.fetch()
+            for wine_tmp in wine_tmps:
+                items = wine_tmp.name
+                if name in items.lower():
+                    wine_query = wine_query.filter(wine.name == wine_tmp.name)
+                    name_warn = 0
+                    break
+                else:
+                    name_warn = 1
+        else:
+            name_warn = 0
+
+        if region != '':
+            wine_tmps = wine_query.fetch()
+            for wine_tmp in wine_tmps:
+                items = wine_tmp.region
+                if region in items.lower():
+                    wine_query = wine_query.filter(wine.region == wine_tmp.region)
+                    region_warn = 0
+                    break
+                else:
+                    region_warn = 1
+        else:
+            region_warn = 0
 
         if country != '':
             wine_tmps = wine_query.fetch()
@@ -142,39 +188,50 @@ class Search(webapp2.RequestHandler):
                 items = wine_tmp.country
                 if country in items.lower():
                     wine_query = wine_query.filter(wine.country == wine_tmp.country)
-        if region != '':
-            wine_tmps = wine_query.fetch()
-            for wine_tmp in wine_tmps:
-                items = wine_tmp.region
-                if region in items.lower():
-                    wine_query = wine_query.filter(wine.region == wine_tmp.region)
+                    country_warn = 0
+                    break
+                else:
+                    country_warn = 1
+        else:
+            country_warn = 0
+
         if variety != '':
             wine_tmps = wine_query.fetch()
             for wine_tmp in wine_tmps:
                 items = wine_tmp.variety
                 if variety in items.lower():
                     wine_query = wine_query.filter(wine.variety == wine_tmp.variety)
-        if name != '':
-            wine_tmps = wine_query.fetch()
-            for wine_tmp in wine_tmps:
-                items = wine_tmp.name
-                if region in items.lower():
-                    wine_query = wine_query.filter(wine.name == wine_tmp.name)
+                    variety_warn = 0
+                    break
+                else:
+                    variety_warn = 1
+        else:
+            variety_warn = 0
+
         if year != '':
             wine_tmps = wine_query.fetch()
             for wine_tmp in wine_tmps:
                 items = wine_tmp.year
                 if year in items.lower():
                     wine_query = wine_query.filter(wine.year == wine_tmp.year)
+                    year_warn = 0
+                    break
+                else:
+                    year_warn = 1
+        else:
+            year_warn = 0
 
-        if warn1 != 1:
-            if len(wine_query.fetch(1)) != 0:
-                wines = wine_query.fetch(50)
-            else:
-                warn2 = 1
+
+        if cate_warn == 1 or name_warn == 1 or country_warn == 1 or region_warn or variety_warn == 1 or year_warn == 1:
+            print "Heer"
+            warn2 = 1
+        else:
+            wines = wine_query.fetch()
+            warn2 = 0
 
         wine_values = {
             'wines': wines,
+            'warn0': warn0,
             'warn1': warn1,
             'warn2': warn2,
         }
