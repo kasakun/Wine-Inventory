@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# Author: Zeyu Chen
 # [START imports]
 import os
 import urllib
@@ -17,7 +16,7 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     autoescape=True)
 # [END imports]
 
-DEFAULT_WINE_CAT = 'Red'
+DEFAULT_WINE_CAT = 'red'
 
 
 # We set a parent key on the 'Greetings' to ensure that they are all
@@ -26,11 +25,10 @@ DEFAULT_WINE_CAT = 'Red'
 # ~1/second.
 
 def wine_key(wine_cate=DEFAULT_WINE_CAT):
-    """Constructs a Datastore key for a Wine entity.
-
-    We use wine_cate as the key.
-    """
-    return ndb.Key('WineCategory', wine_cate)
+    """Constructs a Datastore key for a Wine entity."""
+    return ndb.Key('WineCategory', wine_cate.lower())
+def cart_key(user):
+    return ndb.Key('User', user)
 
 class wine(ndb.Model):
     """A main model for representing an individual Wine entry."""
@@ -39,6 +37,7 @@ class wine(ndb.Model):
     variety = ndb.StringProperty(indexed = True)
     name = ndb.StringProperty(indexed = True)
     year = ndb.StringProperty(indexed = True)
+    price = ndb.FloatProperty(indexed=False)
     date = ndb.DateTimeProperty(auto_now_add = True)
 
 
@@ -47,29 +46,59 @@ class MainPage(webapp2.RequestHandler):
 
     def get(self):
         template = JINJA_ENVIRONMENT.get_template('index.html')
-        self.response.write(template.render())
+
+        cookie_id = self.request.cookies.get('key')  # if first time, then generate an cookie_id
+        if cookie_id == None:
+            cookie_id = str(random.randint(1000000000, 9999999999))
+
+        user = users.get_current_user()
+        if user:
+            url = users.create_logout_url('/')
+            url_linktext = 'Logout'
+        else:
+            url = users.create_login_url('/')
+            url_linktext = 'Login'
+
+        template_values = {
+            'url': url,
+            'url_linktext': url_linktext
+        }
+
+        template = JINJA_ENVIRONMENT.get_template('index.html')
+        self.response.write(template.render(template_values))
 # [END main_page]
 
 # Wine
 class Wine(webapp2.RequestHandler):
     def get(self):
-        cate = self.request.get('WineCategory')
+        cate = self.request.get('WineCategory').lower()
 
         if cate == '':
             wine_query = wine.query().order(-wine.date)
         else:
             wine_query = wine.query(ancestor = wine_key(cate)).order(-wine.date)
 
+        ##user
+        user = users.get_current_user()
+        if user:
+            url = users.create_logout_url('/')
+            url_linktext = 'Logout'
+        else:
+            url = users.create_login_url('/')
+            url_linktext = 'Login'
+
         wines = wine_query.fetch(50)
         wine_values = {
             'wines': wines,
-            'cate': cate
+            'cate': cate,
+            'url': url,
+            'url_linktext': url_linktext
         }
         template = JINJA_ENVIRONMENT.get_template('wine.html')
         self.response.write(template.render(wine_values))
 
     def post(self):
-        cate = self.request.get('bt');
+        cate = self.request.get('bt').lower();
 
         query_params = {'WineCategory': cate}
         self.redirect('/wine?' + urllib.urlencode(query_params))
@@ -79,30 +108,55 @@ class Wine(webapp2.RequestHandler):
 class Enter(webapp2.RequestHandler):
     def get(self):
         template = JINJA_ENVIRONMENT.get_template('enter.html')
-        self.response.write(template.render())
+        ##user
+        user = users.get_current_user()
+        if user:
+            url = users.create_logout_url('/')
+            url_linktext = 'Logout'
+        else:
+            url = users.create_login_url('/')
+            url_linktext = 'Login'
+        template_values = {
+            'url': url,
+            'url_linktext': url_linktext
+        }
+
+        self.response.write(template.render(template_values))
+
     def post(self):
-        cate = self.request.get('WineCategory', 'Red')
-        new_wine = wine(parent = wine_key(cate))
+        cate = self.request.get('WineCategory', 'red')
+        print cate
+        new_wine = wine(parent = wine_key(cate.lower()))
         new_wine.country = self.request.get('country')
         new_wine.region = self.request.get('region')
         new_wine.variety = self.request.get('variety')
         new_wine.name = self.request.get('name')
         new_wine.year = self.request.get('year')
         new_wine.put()
-        query_params = {'WineCategory': cate}
+        query_params = {'WineCategory': cate.lower()}
         self.redirect('/wine?' + urllib.urlencode(query_params))
 
 # Search
 class Search(webapp2.RequestHandler):
     def get(self):
-
         template = JINJA_ENVIRONMENT.get_template('search.html')
-        self.response.write(template.render())
+        ##user
+        user = users.get_current_user()
+        if user:
+            url = users.create_logout_url('/')
+            url_linktext = 'Logout'
+        else:
+            url = users.create_login_url('/')
+            url_linktext = 'Login'
+        template_values = {
+            'url': url,
+            'url_linktext': url_linktext
+        }
+        self.response.write(template.render(template_values))
     def post(self):
         warn0 = 0  ## Check the library
         warn1 = 0  ## Check the input except WineCategory
         warn2 = 1  ## Check the results
-
         ## Each Tag Sign
         cate_warn = 1
         name_warn = 1
@@ -112,7 +166,6 @@ class Search(webapp2.RequestHandler):
         year_warn = 1
 
         wines = ''
-
 
         cate = self.request.get('WineCategory', 'Red').lower()
         country = self.request.get('country').lower()
@@ -132,7 +185,8 @@ class Search(webapp2.RequestHandler):
             wine_tmps = wine_query.fetch()
             for wine_tmp in wine_tmps:
                 items = wine_tmp.key.parent().id()
-                if cate in items.lower():
+                cate_lower = cate.lower();
+                if cate_lower in items.lower():
                     wine_query = wine.query(ancestor = wine_key(wine_tmp.key.parent().id()))
                     cate_warn = 0
                 else:
@@ -211,7 +265,6 @@ class Search(webapp2.RequestHandler):
 
 
         if cate_warn == 1 or name_warn == 1 or country_warn == 1 or region_warn or variety_warn == 1 or year_warn == 1:
-            print "Heer"
             warn2 = 1
         else:
             wines = wine_query.fetch()
