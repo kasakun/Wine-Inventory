@@ -29,7 +29,7 @@
              {% if url_linktext == "Login" %}
              <div align="right"><a href={{url}}><i class="fa fa-user" aria-hidden="true"></i> {{ url_linktext }}</a></div>
              {% elif url_linktext == "Logout" %}
-              <span class = "navbar-primary">{{ user }}|</span>
+              <span class = "badge badge-primary">{{ user }}</span>|
               <div align="right"><a href={{url}}><i class="fa fa-user" aria-hidden="true"></i>{{ url_linktext }}</a></div>
              {% endif %}
            </div>
