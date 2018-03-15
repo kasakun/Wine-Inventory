@@ -214,7 +214,6 @@ class Search(webapp2.RequestHandler):
 
                 cate_lower = cate.lower();
                 if cate_lower in items:
-                    print cate_lower
                     wine_query = wine.query(ancestor = wine_key(wine_tmp.key.parent().id()))
                     cate_warn = 0
                     break
@@ -318,8 +317,6 @@ class Search(webapp2.RequestHandler):
             'warn1': warn1,
             'warn2': warn2,
         }
-        print "---"
-        print cate_warn
 
         template = JINJA_ENVIRONMENT.get_template('search.html')
         self.response.write(template.render(wine_values))
