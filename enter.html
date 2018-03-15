@@ -12,6 +12,16 @@
 <form class = "info" action = '/enterinfo' method = "POST">
   <div class="row">
     <div class="form-group col-md-4">
+      <label for="WineCategory">Category</label>
+      <input type="text" class="form-control" id="WineCategory" name = "WineCategory" placeholder="Category" required>
+      <div class="invalid-feedback">
+        Please input the Category.
+      </div>
+    </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="form-group col-md-4">
       <label for="name">Name</label>
       <input type="text" class="form-control" id="name" name = "name" placeholder="Name" required>
       <div class="invalid-feedback">
@@ -34,13 +44,6 @@
     </div>
   </div>
   <div class = "row">
-    <div class="form-group col-md-4">
-      <label for="WineCategory">Category</label>
-      <input type="text" class="form-control" id="WineCategory" name = "WineCategory" placeholder="Category" required>
-      <div class="invalid-feedback">
-        Please input the Category.
-      </div>
-    </div>
     <div class="form-group col-md-3">
       <label for="variety">Variety</label>
       <input type="text" class="form-control" id="variety" name = "variety" placeholder="Variety" required>
@@ -50,12 +53,20 @@
     </div>
     <div class="form-group col-md-2">
       <label for="variety">Year</label>
-      <input type="text" class="form-control" id="year" name = "year" placeholder="Year" required>
+      <input type="number" class="form-control" id="year" name = "year" min="0" max="9999" placeholder="1900" required>
       <div class="invalid-feedback">
         Please input the Year.
+      </div>
+    </div>
+    <div class="form-group col-md-2">
+      <label for="variety">Price</label>
+      <input type="number" class="form-control" id="price" name = "price" step = "0.01" placeholder="0.00" required>
+      <div class="invalid-feedback">
+        Please input the Price.
       </div>
     </div>
   </div>
   <button id = "submit" type="submit" class="btn btn-primary">Submit</button>
 </form>
+<hr>
 {% endblock %}

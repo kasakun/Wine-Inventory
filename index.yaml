@@ -4,3 +4,15 @@ indexes:
   properties:
   - name: date
     direction: desc
+- kind: cart_entry
+  ancestor: yes
+  properties:
+  - name: wine_id
+  - name: date
+    direction: desc
+- kind: history_entry
+  ancestor: yes
+  properties:
+  - name: wine_id
+  - name: date
+    direction: desc

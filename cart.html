@@ -1,0 +1,79 @@
+{% extends "index.html" %}
+{% block title %}Wine Library{% endblock %}
+{% block jumbo %}
+  <nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    {% if login_sign %}
+    <li class="breadcrumb-item"><a href="/cart">{{ user }}'s Cart</a></li>
+    {% else %}
+    <li class="breadcrumb-item"><a href="/cart"> Cart</a></li>
+    {% endif %}
+  </ol>
+  </nav>
+{% endblock %}
+{% block content %}
+<!-- <div class = "row">
+  <div class = "btn-toolbar btn-group-lg" role="toolbar" aria-label="Toolbar2 with button groups">
+    <form action = "/search" method = "GET">
+      <button type = "type" class = "btn btn-lg btn-outline-info" href = "#"> Search</button>
+    </form>
+    <form action = "/enterinfo" method = "GET">
+      <button type = "submit" class = "btn btn-lg btn-outline-success" href = "#"> Enter New Wine Info </button>
+    </form>
+  </div>
+</div> -->
+<div class = "bd-callout bd-callout-danger">
+  <form class = "form-inline col-sm-6" action = '/checkout' method = "POST">
+    <div class="form-group">
+      <h4>Total: ${{ total }} </h4>
+      <div>
+        {% if login_sign %}
+        <button type="submit" class="btn btn-primary">Check out</button>
+        {% else %}
+        <h4><span class="badge badge-warning">Please Login to check out</span></h4>
+        {% endif %}
+      </div>
+    </div>
+  </form>
+</div>
+<hr>
+{% for wine in wines %}
+<div class="card">
+    <div class = "card-header text-white bg-primary"> Name: {{wine[0].name}}</div>
+    <ul class = "list-group list-group-flush">
+      <li class = "list-group-item">Category: {{ wine[0].key.parent().id() }},
+                                    Variety: {{wine[0].variety}},
+                                    Region: {{wine[0].region}},
+                                    Country: {{wine[0].country}},
+                                    Year: {{wine[0].year}}</li>
+      <li class = "list-group-item">Quantity: {{ wine[1] }}</li>
+      <li class = "list-group-item">
+        <div class = "row">
+          <form class = "form-inline col-sm-6" action = '/cart' method = "POST">
+            <div class="form-group">
+              <div class = "form-group number-spinner">
+        				<div class="input-group-prepend">
+        					<button class="btn btn-outline-secondary" data-dir="dwn" type="button"><span class="fa fa-minus"></span></button>
+                </div>
+                <input type="text" class="form-control input-sm text-center" id="num" name = "num" value="{{ wine[1] }}">
+        				<div class="input-group-append">
+        					<button class="btn btn-outline-secondary" data-dir="up" type="button"><span class="fa fa-plus"></span></button>
+        				</div>
+              </div>
+              <div>
+                <input id = "id" name = "id" value = "{{ wine[0].id }}" hidden>
+      					<button type="submit" class="btn btn-primary">Update</button>
+      				</div>
+            </div>
+          </form>
+          <form class = "form-inline col-sm-2" action = '/delete' method = "POST">
+            <input id = "id" name = "id" value = "{{ wine[0].id }}" hidden>
+            <button type="submit" class="btn btn-danger">Delete</button>
+          </form>
+        </div>
+      </li>
+    </ul>
+</div>
+{% endfor %}
+{% endblock %}
