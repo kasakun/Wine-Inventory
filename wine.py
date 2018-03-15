@@ -3,6 +3,7 @@
 import os
 import urllib
 import random
+import time
 
 from google.appengine.api import users
 from google.appengine.ext import ndb
@@ -197,8 +198,9 @@ class Search(webapp2.RequestHandler):
         variety = self.request.get('variety').lower()
         name = self.request.get('name').lower()
         year = self.request.get('year').lower()
+        price = str(self.request.get('price'))
 
-        if country == '' and region == '' and variety ==  '' and name == '' and year == '' :
+        if country == '' and region == '' and variety ==  '' and name == '' and year == '' and price == '':
             warn1 = 1
         ############Search##################
         wine_query = wine.query()
@@ -208,11 +210,14 @@ class Search(webapp2.RequestHandler):
         if cate != '':
             wine_tmps = wine_query.fetch()
             for wine_tmp in wine_tmps:
-                items = wine_tmp.key.parent().id()
+                items = wine_tmp.key.parent().id().lower()
+
                 cate_lower = cate.lower();
-                if cate_lower in items.lower():
+                if cate_lower in items:
+                    print cate_lower
                     wine_query = wine.query(ancestor = wine_key(wine_tmp.key.parent().id()))
                     cate_warn = 0
+                    break
                 else:
                     cate_warn = 1
         else:
@@ -287,19 +292,35 @@ class Search(webapp2.RequestHandler):
         else:
             year_warn = 0
 
+        if price != '':
+            wine_tmps = wine_query.fetch()
+            for wine_tmp in wine_tmps:
+                items = str(wine_tmp.price)
+                if price in items:
+                    wine_query = wine_query.filter(wine.price == wine_tmp.price)
+                    price_warn = 0
+                    break
+                else:
+                    price_warn = 1
+        else:
+            price_warn = 0
 
-        if cate_warn == 1 or name_warn == 1 or country_warn == 1 or region_warn or variety_warn == 1 or year_warn == 1:
+
+        if cate_warn == 1 or name_warn == 1 or country_warn == 1 or region_warn or variety_warn == 1 or year_warn == 1 or price_warn == 1:
             warn2 = 1
         else:
             wines = wine_query.fetch()
             warn2 = 0
-
+        # print wines
         wine_values = {
             'wines': wines,
             'warn0': warn0,
             'warn1': warn1,
             'warn2': warn2,
         }
+        print "---"
+        print cate_warn
+
         template = JINJA_ENVIRONMENT.get_template('search.html')
         self.response.write(template.render(wine_values))
 
@@ -434,6 +455,9 @@ class checkout(webapp2.RequestHandler):
     def post(self):
         user = users.get_current_user()
         cart_entries = cart_entry.query(ancestor = user_key(user.email()))
+        if not cart_entries.fetch():
+            self.redirect('/cart')
+            return
         for entry in cart_entries:
             new_entry = history_entry(parent = user_key(user.email()))
             new_entry.user_id = user.email()
@@ -442,7 +466,11 @@ class checkout(webapp2.RequestHandler):
             new_entry.put()
             entry.key.delete()
 
-        self.redirect('/cart')
+        template_values = {
+            'user': user
+        }
+        template = JINJA_ENVIRONMENT.get_template('thank.html')
+        self.response.write(template.render(template_values))
 
 # [START app]
 app = webapp2.WSGIApplication([
@@ -453,6 +481,6 @@ app = webapp2.WSGIApplication([
     ('/cart', Cart),
     ('/addtocart', addtocart),
     ('/delete', delete),
-    ('/checkout', checkout)
+    ('/checkout', checkout),
 ], debug=True)
 # [END app]

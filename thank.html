@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+{% block title %}Wine Library{% endblock %}
+{% block jumbo %}
+  <nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="/">Home</a></li>
+    {% if login_sign %}
+    <li class="breadcrumb-item"><a href="/cart">{{ user }}'s Cart</a></li>
+    {% else %}
+    <li class="breadcrumb-item"><a href="/cart"> Cart</a></li>
+    {% endif %}
+  </ol>
+  </nav>
+{% endblock %}
+{% block content %}
+<h4>{{ user }}, Thank you for your purchase</h4>
+{% endblock %}
